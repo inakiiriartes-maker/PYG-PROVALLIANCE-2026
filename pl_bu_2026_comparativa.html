@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Provalliance · P&L por Unidad de Negocio · 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--crema:#FAF8F3;--blanco:#FFF;--navy:#1a2744;--oro:#B8923E;--tinta:#22242a;--gris:#8a8678;--linea:#E7E2D6;--verde:#2E7D5B;--verde-claro:#92D050;--rojo:#B5443C;--amarillo:#FFFF00;--banda:#DCDCDC}
+body{font-family:'DM Sans',sans-serif;background:var(--crema);color:var(--tinta);font-size:14px}
+h1,h3{font-family:'Cormorant Garamond',serif}
+.topbar{background:var(--navy);color:#fff;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar .brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;letter-spacing:1px}
+.topbar .brand span{color:var(--oro)}
+.topbar .sub{font-size:11px;opacity:.6;letter-spacing:2px;text-transform:uppercase}
+.main{max-width:1180px;margin:0 auto;padding:26px 32px 60px}
+.bu-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.bu-pill{padding:8px 16px;border:1px solid var(--linea);border-radius:24px;background:var(--blanco);color:var(--gris);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;position:relative}
+.bu-pill:hover{border-color:var(--oro);color:var(--tinta)}
+.bu-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.bu-pill.active.grupo{background:var(--oro);border-color:var(--oro);color:#fff}
+.bu-pill .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--verde-claro);margin-left:6px;vertical-align:2px}
+.mes-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
+.mes-label{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:1.5px;margin-right:6px}
+.mes-pill{padding:5px 12px;border:1px solid var(--linea);border-radius:8px;background:var(--blanco);color:var(--gris);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.mes-pill:hover{border-color:var(--oro);color:var(--tinta)}
+.mes-pill.active{background:var(--oro);border-color:var(--oro);color:#fff;font-weight:700}
+.mes-pill.prov{border-style:dashed}
+.page-title{font-size:34px;font-weight:600;color:var(--navy)}
+.page-sub{color:var(--gris);font-size:13px;margin-bottom:20px;letter-spacing:.4px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--blanco);border:1px solid var(--linea);border-radius:12px;padding:16px 20px}
+.kpi-label{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px}
+.kpi-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--navy)}
+.kpi-value.neg{color:var(--rojo)}
+.kpi-deltas{display:flex;gap:12px;margin-top:6px;font-size:11.5px;font-weight:500;flex-wrap:wrap}
+.up{color:var(--verde)}.down{color:var(--rojo)}.mut{color:var(--gris)}
+.pl-card{background:var(--blanco);border:1px solid var(--linea);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.pl-wrap{overflow-x:auto}
+table.pl{width:100%;border-collapse:collapse;font-size:13px}
+.pl th,.pl td{padding:6px 14px;white-space:nowrap}
+.pl thead th{font-size:11px;font-weight:700;letter-spacing:.6px;text-align:center;padding:8px 14px}
+.th-a26{background:var(--navy);color:#fff}
+.th-b26{background:var(--verde-claro);color:#1d3a12}
+.th-25{background:var(--banda);color:#3a3a3a}
+.th-vs{font-size:10px;color:var(--gris);font-weight:500;text-align:center;background:#F2EFE6}
+.pl td.concept{text-align:left;min-width:215px}
+.pl td.num{text-align:right;font-variant-numeric:tabular-nums}
+.r-main td{font-weight:700;padding-top:8px}
+.r-sub td.concept{padding-left:34px;font-weight:400;color:#444}
+.r-sub td{font-weight:400;color:#444}
+.r-pct td{font-size:11.5px;color:var(--gris);padding-top:0;padding-bottom:7px}
+.r-pct td.concept{padding-left:26px}
+.r-margin td{color:var(--verde);font-weight:600}
+.r-band td{background:var(--banda);font-weight:700;border-top:2px solid #bbb}
+.r-band-pct td{background:var(--banda);font-size:11.5px;color:#555}
+.r-ebitda td{background:var(--amarillo);font-weight:700;font-size:14px;border-top:2px solid var(--tinta)}
+.r-ebitda-pct td{background:var(--amarillo);font-size:12px;font-weight:600}
+.neg{color:var(--rojo)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}}
+.card{background:var(--blanco);border:1px solid var(--linea);border-radius:12px;padding:20px 24px}
+.card h3{font-size:20px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.card .card-sub{font-size:11.5px;color:var(--gris);margin-bottom:14px}
+.chart-box{position:relative;height:280px}
+.footer-note{margin-top:28px;padding-top:16px;border-top:1px solid var(--linea);font-size:11.5px;color:var(--gris);line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Prov<span>alliance</span></div>
+  <div class="sub">P&L 2026 · A2026 vs B2026 vs A2025</div>
+</div>
+
+<div class="main">
+  <div class="bu-selector" id="buSelector"></div>
+  <div class="mes-bar" id="mesBar"></div>
+  <h1 class="page-title" id="pageTitle"></h1>
+  <div class="page-sub" id="pageSub"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="pl-card"><div class="pl-wrap"><table class="pl" id="plTable"></table></div></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Evolución mensual</h3>
+      <div class="card-sub" id="chart1Sub">Revenue por mes · miles de €</div>
+      <div class="chart-box"><canvas id="chart1"></canvas></div>
+    </div>
+    <div class="card">
+      <h3 id="chart2Title">EBITDA mensual</h3>
+      <div class="card-sub" id="chart2Sub">miles de €</div>
+      <div class="chart-box"><canvas id="chart2"></canvas></div>
+    </div>
+  </div>
+  <div class="footer-note">
+    <strong>Fuentes:</strong> A2026 desde el diario Sage X3 (ZDIARIO, dimensión BUN), se actualiza con cada export mensual. B2026 y A2025 son datos estáticos cargados desde el Full PyG (de momento solo DIST — el punto verde en el selector indica las unidades con escenarios cargados). Excluidos de EBITDA: excepcionales, financieros, amortización y deterioro. Meses jun–dic del A2026 con borde discontinuo: contienen asientos provisionales del cierre. Desviaciones «vs A2026» calculadas sobre valores absolutos; % Revenue comparados en puntos.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DB = {"A":{"HQ":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[23.0,23.0,23.0,23.0,23.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[2.07,4.01,4.01,3.91,3.86,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[0.0,-0.25,-0.27,-2.14,-1.15,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-117.6,-146.38,-153.41,-153.57,-151.91,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-19.22,-19.57,-19.54,-20.48,-21.09,0.52,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-138.63,-130.91,-127.21,-126.09,-110.13,42.5,-1.27,-1.27,-1.27,-1.03,-1.03,-1.03],"mkt":[-59.77,-21.46,-64.22,-37.23,-35.6,2.83,-14.07,-14.07,-1.57,-1.57,-1.57,-1.57],"tax":[-5.48,-2.33,-5.86,-5.5,-5.72,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"DIST":{"roy":[0.0,0.0,0.0,0.0,0.0,-0.07,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[2.63,12.24,14.2,9.69,9.69,-48.46,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[173.08,207.15,101.42,93.74,117.28,110.69,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-138.01,-151.61,-67.31,-66.96,-85.7,13.9,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-50.81,-54.7,-42.42,-39.1,-37.23,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-12.89,-21.43,-7.12,-6.63,-8.11,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-27.95,-30.01,-19.17,-18.49,-19.37,1.52,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[-12.97,-14.49,-25.8,-28.79,-20.58,-1.68,-6.67,-6.67,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"WHOLESALE":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,0.0,0.0,0.0,-0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[210.15,137.68,96.5,195.12,154.04,-171.4,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-159.3,-104.98,-73.21,-152.0,-150.68,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-12.17,-10.68,-10.15,-15.49,-8.26,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-15.65,-9.27,-2.98,-12.56,-10.66,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-14.08,-5.6,-2.18,-9.1,-6.43,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"BSTORES":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[441.67,464.03,445.83,445.83,445.83,-638.0,16.67,16.67,16.67,16.67,16.67,16.67],"prod":[94.96,60.5,57.74,38.28,54.15,-3.49,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-66.77,-50.34,-56.31,-30.7,-35.35,28.74,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-56.28,-46.85,-44.01,-42.1,-51.72,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-0.18,-0.19,-3.77,-1.78,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-2.12,-2.21,-5.0,-7.26,-0.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[0.0,0.0,-16.44,-22.45,-4.0,-2.35,-2.35,-2.35,-2.35,-2.35,-2.35,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"B2CECOMM":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,32.84,0.0,0.0,113.73,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[411.63,380.16,531.39,660.7,624.46,-1688.65,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-249.41,-374.48,-421.2,-390.5,-63.32,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-27.57,-43.95,-36.65,-37.29,-21.4,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-12.87,-17.11,-25.9,-31.0,-24.33,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-20.66,-134.27,-83.54,-20.59,-9.9,0.75,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[-3.41,-9.07,-5.83,-6.21,-9.52,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"PROPIOS":{"roy":[-63.85,-63.21,-64.68,-68.62,-50.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,5.52,0.16,1.11,0.36,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[255.39,186.38,206.15,210.34,224.26,12.85,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[2027.07,1977.28,2282.23,2170.94,2254.57,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.16,0.12,0.12,38.07,0.12,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-355.71,-282.53,-312.84,-333.39,-344.97,29.83,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-1382.74,-1353.53,-1412.77,-1370.83,-1363.19,180.57,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-320.99,-306.69,-313.47,-314.13,-319.3,-29.68,-3.54,-3.54,-3.54,-3.54,-3.54,-3.54],"opex":[-157.24,-160.29,-147.57,-157.53,-169.66,-8.96,-5.39,-5.5,-5.27,-5.27,-4.05,-3.93],"mkt":[-0.89,-1.25,-0.55,-2.22,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[-10.64,-12.36,-9.92,-16.23,-10.74,-0.91,-0.02,-0.02,-0.02,-0.02,-0.02,-0.02],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"B2BECOMM":{"roy":[2.37,2.37,2.32,2.07,2.02,1.85,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[0.0,0.0,0.94,0.69,0.0,0.56,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[25.0,0.0,0.09,25.0,0.0,0.22,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[0.0,0.0,0.0,0.17,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-0.0,-1.85,-0.04,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[0.0,0.0,-0.07,0.0,-3.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-10.09,-10.09,-10.26,-12.78,-11.55,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[0.0,-3.87,-0.56,-1.43,-4.05,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"FRANQUICIA":{"roy":[173.95,159.73,155.34,137.6,153.26,106.71,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[173.09,190.83,220.96,221.0,317.77,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[106.53,76.95,78.41,130.12,159.11,30.17,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,-4.55,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-62.82,-48.97,-141.95,-1538.22,-89.64,178.52,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-75.01,-72.8,-79.32,-75.67,-94.88,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-9.69,-8.14,-16.71,-20.87,-12.79,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-14.13,-31.03,-33.47,-35.09,-33.77,-9.8,-0.88,-0.88,-0.88,-0.88,-0.88,-0.88],"mkt":[0.0,0.0,-0.84,-1.18,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"EDUCACION":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[31.63,35.3,34.53,23.17,25.65,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,1.37,0.9,0.32,0.97,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-1.37,-3.25,-3.71,-2.84,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[-23.96,-32.76,-24.93,-24.78,-24.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-5.43,-5.82,-5.71,-5.69,-5.64,-5.62,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-10.9,-6.39,-10.31,-10.14,-21.81,-6.3,-0.21,-0.21,-0.21,-0.21,-0.09,-0.09],"mkt":[0.0,0.0,0.0,-1.04,-0.52,-0.72,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},"SINBU":{"roy":[0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[0.0,0.0,128.9,-0.0,140.52,52.92,0.0,0.0,0.0,0.0,0.0,0.0],"serv":[0.0,0.0,0.0,3.79,0.24,4.2,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,4.82,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[0.0,-0.0,61.77,121.05,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"pers":[2.99,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"leases":[-0.04,0.0,-4.39,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"opex":[-0.53,-1.11,-0.65,-0.46,-0.01,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"mkt":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"tax":[-1.12,0.0,-0.04,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"royexp":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}},"S":{"DIST":{"B2026":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"coop":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"prod":[214.39,230.18,238.08,245.98,253.87,277.56,324.94,89.49,301.25,317.04,324.94,340.73],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"otros":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"cogs":[-153.39,-164.69,-170.34,-175.99,-181.64,-198.59,-232.49,-64.03,-215.54,-226.84,-232.49,-243.79],"pers":[-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-26.73,-59.45],"leases":[-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83,-7.83],"opex":[-23.39,-15.92,-16.19,-16.46,-16.73,-17.53,-19.14,-7.54,-18.34,-18.87,-19.14,-19.68],"mkt":[-13.58,-14.58,-15.08,-15.58,-16.08,-17.58,-20.58,-5.67,-19.08,-20.08,-20.58,-21.58],"tax":[0.0,0.0,0.0,-4.1,0.0,0.0,0.0,0.0,-0.34,-3.36,0.0,-0.47],"royexp":[0,0,0,0,0,0,0,0,0,0,0,0]},"A2025":{"roy":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.22],"coop":[0.0,0.0,66.53,0.0,21.06,0.0,0.0,8.24,15.95,0.0,28.3,20.33],"prod":[105.14,437.45,195.93,241.22,358.48,143.22,103.31,71.51,215.56,242.42,264.73,126.29],"serv":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.22],"otros":[0.0,0.0,-0.0,0.0,0.0,0.0,0.0,-0.0,-0.0,0.0,-0.0,-0.21],"cogs":[-71.24,-334.9,-203.9,-187.1,-266.34,-99.1,-74.23,-62.41,-183.25,-177.23,-233.32,-92.88],"pers":[-7.02,-7.02,-7.02,-7.02,-7.02,-7.02,-7.0,-7.02,-7.02,-8.9,-5.07,-3.96],"leases":[0.0,0.0,0.0,0.0,-24.81,-4.01,-4.01,-12.18,-14.42,-13.12,-24.69,-16.05],"opex":[-12.67,-10.02,-21.12,-27.31,-24.52,-24.41,-17.74,-17.15,-32.9,-46.86,-30.48,-35.24],"mkt":[-4.64,-13.35,-25.26,-17.56,-22.83,-0.78,-17.63,-4.86,-36.38,-36.59,-14.9,-1.3],"tax":[0.0,0.0,0.0,-4.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.47],"royexp":[0,0,0,0,0,0,0,0,0,0,0,0]}}}};
+const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const ORDER=['HQ','DIST','WHOLESALE','BSTORES','B2CECOMM','PROPIOS','B2BECOMM','FRANQUICIA','EDUCACION','SINBU'];
+const NICE={HQ:'HQ',DIST:'DIST',WHOLESALE:'WHOLESALE',BSTORES:'BSTORES',B2CECOMM:'B2C ECOMM',PROPIOS:'PROPIOS',B2BECOMM:'B2B ECOMM',FRANQUICIA:'FRANQUICIA',EDUCACION:'EDUCACION',SINBU:'Sin BU'};
+const LINES=['roy','coop','prod','serv','otros','cogs','pers','leases','opex','mkt','tax','royexp'];
+const REV=['roy','coop','prod','serv','otros'];
+const NAVY='#1a2744',ORO='#B8923E',VERDE='#2E7D5B',VCLARO='#92D050',ROJO='#B5443C',GRISC='#9e9e9e';
+let activeBU='GRUPO',activeMes='ACUM',charts={};
+
+function arrA(bu,l){if(bu!=='GRUPO')return DB.A[bu][l];return MESES.map((_,i)=>ORDER.reduce((a,k)=>a+DB.A[k][l][i],0));}
+function hasScen(bu){return bu!=='GRUPO'&&DB.S[bu];}
+function arrS(bu,esc,l){return DB.S[bu][esc][l];}
+function agg(arr){return activeMes==='ACUM'?arr.reduce((a,b)=>a+b,0):arr[activeMes];}
+
+function deriv(get){
+  const v={};LINES.forEach(l=>v[l]=get(l));
+  v.rev=REV.reduce((a,l)=>a+v[l],0);
+  v.gm=v.rev+v.cogs;
+  v.ebitda=v.gm+v.pers+v.leases+v.opex+v.mkt+v.tax+v.royexp;
+  v.prodMg=Math.abs(v.prod)>0.05?(v.prod+v.cogs)/v.prod*100:null;
+  return v;
+}
+
+function fN(v){if(v===null||Math.abs(v)<0.05)return '-';const a=Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1});return v<0?`(${a})`:a;}
+function fPct(v){if(v===null)return '-';const a=Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';return v<0?`(${a})`:a;}
+function fPts(v){if(v===null)return '-';const a=Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';return (v>=0?'+ ':'- ')+a;}
+function fPv(v){if(v===null)return '-';return v.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';}
+function varPct(a,ref){if(ref===null||Math.abs(ref)<0.05)return null;return (Math.abs(a)/Math.abs(ref)-1)*100;}
+function pr(v,rev){return Math.abs(rev)>0.05?v/rev*100:null;}
+function cls(v){return v!==null&&v<-0.05?'neg':''}
+
+function renderSelector(){
+  let h=`<button class="bu-pill ${activeBU==='GRUPO'?'active grupo':''}" onclick="setBU('GRUPO')">◆ Grupo</button>`;
+  ORDER.forEach(k=>{h+=`<button class="bu-pill ${activeBU===k?'active':''}" onclick="setBU('${k}')">${NICE[k]}${DB.S[k]?'<span class="dot"></span>':''}</button>`;});
+  document.getElementById('buSelector').innerHTML=h;
+}
+function renderMesBar(){
+  let h=`<span class="mes-label">Período</span><button class="mes-pill ${activeMes==='ACUM'?'active':''}" onclick="setMes('ACUM')">Año completo</button>`;
+  MESES.forEach((m,i)=>{h+=`<button class="mes-pill ${i>=5?'prov':''} ${activeMes===i?'active':''}" onclick="setMes(${i})">${m}</button>`;});
+  document.getElementById('mesBar').innerHTML=h;
+}
+
+function rowScen(c,t,a,b,p,o={}){
+  const fmt=o.fmt||fN, vf=o.vfmt||fPct;
+  const vb=o.varB!==undefined?o.varB:varPct(a,b);
+  const vp=o.varP!==undefined?o.varP:varPct(a,p);
+  return `<tr class="${c}"><td class="concept">${t}</td>
+    <td class="num ${cls(a)}">${fmt(a)}</td>
+    <td class="num ${cls(b)}">${fmt(b)}</td><td class="num ${cls(vb)}">${vf(vb)}</td>
+    <td class="num ${cls(p)}">${fmt(p)}</td><td class="num ${cls(vp)}">${vf(vp)}</td></tr>`;
+}
+function rowSimple(c,t,v,pct){
+  return `<tr class="${c}"><td class="concept">${t}</td><td class="num ${cls(v)}">${fN(v)}</td><td class="num" style="font-size:11.5px;color:var(--gris)">${pct}</td></tr>`;
+}
+
+function renderAll(){
+  renderSelector();renderMesBar();
+  const periodo=activeMes==='ACUM'?'Acumulado año completo 2026':MESES[activeMes]+' 2026';
+  document.getElementById('pageTitle').textContent=activeBU==='GRUPO'?'Grupo consolidado':NICE[activeBU];
+
+  const A=deriv(l=>agg(arrA(activeBU,l)));
+  let B=null,P=null;
+  if(hasScen(activeBU)){
+    B=deriv(l=>agg(arrS(activeBU,'B2026',l)));
+    P=deriv(l=>agg(arrS(activeBU,'A2025',l)));
+  }
+  document.getElementById('pageSub').textContent=periodo+' · miles de € · '+(B?'A2026 (diario Sage) vs B2026 vs A2025':'solo A2026 — escenarios pendientes de cargar')+(activeMes!=='ACUM'&&activeMes>=5?' · ⚠ mes con asientos provisionales en A2026':'');
+
+  const kd=(label,a,b,p,inv)=>{
+    let deltas='';
+    if(b!==null){const d=varPct(a,b);deltas+=`<span class="${d===null?'mut':(d>=0?'up':'down')}">vs B26: ${fPct(d)}</span>`;}
+    if(p!==null){const d=varPct(a,p);deltas+=`<span class="${d===null?'mut':(d>=0?'up':'down')}">vs A25: ${fPct(d)}</span>`;}
+    if(!deltas)deltas=`<span class="mut">${label==='Revenue'?periodo:''}</span>`;
+    return `<div class="kpi"><div class="kpi-label">${label}</div><div class="kpi-value ${cls(a)}">${fN(a)}</div><div class="kpi-deltas">${deltas}</div></div>`;
+  };
+  document.getElementById('kpis').innerHTML=
+    kd('Revenue',A.rev,B?B.rev:null,P?P.rev:null)+
+    kd('Gross margin',A.gm,B?B.gm:null,P?P.gm:null)+
+    kd('EBITDA',A.ebitda,B?B.ebitda:null,P?P.ebitda:null)+
+    `<div class="kpi"><div class="kpi-label">EBITDA % revenue</div><div class="kpi-value ${cls(A.ebitda)}">${fPv(pr(A.ebitda,A.rev))}</div><div class="kpi-deltas">${B?`<span class="mut">B26: ${fPv(pr(B.ebitda,B.rev))}</span>`:''}${P?`<span class="mut">A25: ${fPv(pr(P.ebitda,P.rev))}</span>`:''}</div></div>`;
+
+  let h;
+  if(B){
+    h=`<thead><tr><th></th><th class="th-a26">A2026</th><th class="th-b26" colspan="2">B2026</th><th class="th-25" colspan="2">A2025</th></tr>
+    <tr><th></th><th></th><th class="th-vs"></th><th class="th-vs">vs A2026</th><th class="th-vs"></th><th class="th-vs">vs A2026</th></tr></thead><tbody>`;
+    h+=rowScen('r-main','Revenue',A.rev,B.rev,P.rev);
+    h+=rowScen('r-sub','Royalties',A.roy,B.roy,P.roy);
+    h+=rowScen('r-sub','Commercial cooperation',A.coop,B.coop,P.coop);
+    h+=rowScen('r-sub','Products',A.prod,B.prod,P.prod);
+    h+=rowScen('r-sub','Services',A.serv,B.serv,P.serv);
+    h+=rowScen('r-sub','Other revenue',A.otros,B.otros,P.otros);
+    h+=rowScen('r-main','COGS',A.cogs,B.cogs,P.cogs);
+    h+=rowScen('r-margin','Product margin [%]',A.prodMg,B.prodMg,P.prodMg,
+      {fmt:fPv,vfmt:fPts,varB:(A.prodMg!==null&&B.prodMg!==null)?A.prodMg-B.prodMg:null,varP:(A.prodMg!==null&&P.prodMg!==null)?A.prodMg-P.prodMg:null});
+    h+=rowScen('r-band','Gross margin',A.gm,B.gm,P.gm);
+    h+=rowScen('r-band-pct','% Revenue',pr(A.gm,A.rev),pr(B.gm,B.rev),pr(P.gm,P.rev),
+      {fmt:fPv,vfmt:fPts,varB:diffN(pr(A.gm,A.rev),pr(B.gm,B.rev)),varP:diffN(pr(A.gm,A.rev),pr(P.gm,P.rev))});
+    [['Personnel [Staff]','pers'],['Leases','leases'],['Operational expenses','opex'],['Marketing','mkt'],['Taxes','tax'],['Royalties expense','royexp']].forEach(([t,l])=>{
+      h+=rowScen('r-main',t,A[l],B[l],P[l]);
+      h+=rowScen('r-pct','% Revenue',pr(A[l],A.rev),pr(B[l],B.rev),pr(P[l],P.rev),
+        {fmt:v=>v===null||Math.abs(v)<0.05?'-':`(${Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})} %)`,
+         vfmt:fPts,
+         varB:absDiff(pr(B[l],B.rev),pr(A[l],A.rev)),varP:absDiff(pr(P[l],P.rev),pr(A[l],A.rev))});
+    });
+    h+=rowScen('r-ebitda','EBITDA',A.ebitda,B.ebitda,P.ebitda);
+    h+=rowScen('r-ebitda-pct','% Revenue',pr(A.ebitda,A.rev),pr(B.ebitda,B.rev),pr(P.ebitda,P.rev),
+      {fmt:fPv,vfmt:fPts,varB:diffN(pr(A.ebitda,A.rev),pr(B.ebitda,B.rev)),varP:diffN(pr(A.ebitda,A.rev),pr(P.ebitda,P.rev))});
+  } else {
+    h=`<thead><tr><th class="th-a26" style="text-align:left">Concepto</th><th class="th-a26">A2026</th><th class="th-a26">% Revenue</th></tr></thead><tbody>`;
+    const pj=v=>{const x=pr(v,A.rev);return x===null?'':fPv(x);};
+    h+=rowSimple('r-main','Revenue',A.rev,'100,0 %');
+    h+=rowSimple('r-sub','Royalties',A.roy,pj(A.roy));
+    h+=rowSimple('r-sub','Commercial cooperation',A.coop,pj(A.coop));
+    h+=rowSimple('r-sub','Products',A.prod,pj(A.prod));
+    h+=rowSimple('r-sub','Services',A.serv,pj(A.serv));
+    h+=rowSimple('r-sub','Other revenue',A.otros,pj(A.otros));
+    h+=rowSimple('r-main','COGS',A.cogs,pj(A.cogs));
+    h+=rowSimple('r-margin','Product margin [%]',null,A.prodMg===null?'-':fPv(A.prodMg));
+    h+=rowSimple('r-band','Gross margin',A.gm,pj(A.gm));
+    [['Personnel [Staff]','pers'],['Leases','leases'],['Operational expenses','opex'],['Marketing','mkt'],['Taxes','tax'],['Royalties expense','royexp']].forEach(([t,l])=>{h+=rowSimple('r-main',t,A[l],pj(A[l]));});
+    h+=rowSimple('r-ebitda','EBITDA',A.ebitda,pj(A.ebitda));
+  }
+  document.getElementById('plTable').innerHTML=h+'</tbody>';
+  renderCharts(B!==null);
+}
+function diffN(a,b){return (a===null||b===null)?null:a-b;}
+function absDiff(x,y){return (x===null||y===null)?null:Math.abs(x)-Math.abs(y);}
+
+function destroyCharts(){Object.values(charts).forEach(c=>c.destroy());charts={};}
+function renderCharts(scen){
+  destroyCharts();
+  const revA=MESES.map((_,i)=>REV.reduce((a,l)=>a+arrA(activeBU,l)[i],0));
+  const ebA=MESES.map((_,i)=>LINES.reduce((a,l)=>a+arrA(activeBU,l)[i],0));
+  let ds1=[{label:'A2026',data:revA,backgroundColor:NAVY,borderRadius:4}];
+  let ds2=[{label:'A2026',data:ebA,backgroundColor:NAVY,borderRadius:4}];
+  if(scen){
+    const revB=MESES.map((_,i)=>REV.reduce((a,l)=>a+arrS(activeBU,'B2026',l)[i],0));
+    const revP=MESES.map((_,i)=>REV.reduce((a,l)=>a+arrS(activeBU,'A2025',l)[i],0));
+    const ebB=MESES.map((_,i)=>LINES.reduce((a,l)=>a+arrS(activeBU,'B2026',l)[i],0));
+    const ebP=MESES.map((_,i)=>LINES.reduce((a,l)=>a+arrS(activeBU,'A2025',l)[i],0));
+    ds1.push({label:'B2026',data:revB,backgroundColor:VCLARO,borderRadius:4},{label:'A2025',data:revP,backgroundColor:GRISC,borderRadius:4});
+    ds2.push({label:'B2026',data:ebB,backgroundColor:VCLARO,borderRadius:4},{label:'A2025',data:ebP,backgroundColor:GRISC,borderRadius:4});
+  } else if(activeBU==='GRUPO'){
+    document.getElementById('chart2Title').textContent='EBITDA por unidad';
+  }
+  const opts={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:scen,labels:{usePointStyle:true,pointStyle:'rect',font:{size:11},color:'#5a5648'}},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+fN(c.raw)+' k€'}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10.5},color:'#8a8678'}},y:{ticks:{callback:v=>v+'k',color:'#8a8678'},grid:{color:'rgba(0,0,0,0.05)'},border:{display:false}}}};
+  document.getElementById('chart1Sub').textContent='Revenue por mes · miles de €';
+  charts.c1=new Chart(document.getElementById('chart1'),{type:'bar',data:{labels:MESES,datasets:ds1},options:opts});
+  if(activeBU==='GRUPO'&&!scen){
+    document.getElementById('chart2Title').textContent='EBITDA por unidad';
+    document.getElementById('chart2Sub').textContent='Período seleccionado · miles de €';
+    const data=ORDER.map(k=>LINES.reduce((a,l)=>a+agg(DB.A[k][l]),0));
+    charts.c2=new Chart(document.getElementById('chart2'),{type:'bar',
+      data:{labels:ORDER.map(k=>NICE[k]),datasets:[{data,backgroundColor:data.map(v=>v>=0?VERDE:ROJO),borderRadius:4}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fN(c.raw)+' k€'}}},
+        scales:{x:{ticks:{callback:v=>v+'k',font:{size:10.5},color:'#8a8678'},grid:{color:'rgba(0,0,0,0.05)'},border:{display:false}},y:{ticks:{font:{size:11},color:'#22242a'},grid:{display:false},border:{display:false}}}}});
+  } else {
+    document.getElementById('chart2Title').textContent='EBITDA mensual';
+    document.getElementById('chart2Sub').textContent=scen?'A2026 vs B2026 vs A2025 · miles de €':'miles de €';
+    charts.c2=new Chart(document.getElementById('chart2'),{type:'bar',data:{labels:MESES,datasets:ds2},options:opts});
+  }
+}
+function setBU(b){activeBU=b;renderAll();}
+function setMes(m){activeMes=m;renderAll();}
+renderAll();
+</script>
+</body>
+</html>
